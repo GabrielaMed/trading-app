@@ -11,13 +11,3 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
 `;
-
-export const Header = styled.header`
-  width: 100%;
-  height: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${colors.lightGreen};
-  margin-bottom: 2rem;
-`;
