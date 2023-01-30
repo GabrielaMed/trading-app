@@ -1,11 +1,17 @@
 import { Table } from 'react-bootstrap';
 import { Container } from './styles';
 import { Header } from '../../components/Header';
-import { fields } from '../../utils/fields';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { fields as fieldsDefault } from '../../utils/fields';
+import { ITicker } from '../../utils/interfaces';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { db } from '../api/firebase';
 
-export const Home = () => {
+interface Props {
+  dataApi: ITicker[];
+}
+
+export const Home = ({ dataApi }: Props) => {
   const [fields, setFields] = useState(fieldsDefault);
 
   return (
@@ -24,3 +30,15 @@ export const Home = () => {
     </Container>
   );
 };
+
+async function getData() {
+  const data = await getDocs(collection(db, 'tickers'));
+  const dataApi: ITicker[] = [];
+
+  data.forEach((item) => {
+    const itemData = item.data();
+    dataApi.push(itemData as ITicker);
+  });
+
+  return dataApi;
+}
