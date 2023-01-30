@@ -1,3 +1,8 @@
+export interface TFields {
+  name: string;
+  display: boolean;
+}
+
 export const fields = [
   { name: 'Ticker', display: true },
   { name: 'Cotação', display: true },

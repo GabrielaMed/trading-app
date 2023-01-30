@@ -1,10 +1,21 @@
 import { Form, Navbar, Offcanvas } from 'react-bootstrap';
 import { Box, Container } from './styles';
 import { Text } from '@ignite-ui/react';
-import { fields as fieldsDefault } from '../../utils/fields';
 import { useState } from 'react';
-export const Header = () => {
-  const [fields, setFields] = useState(fieldsDefault);
+import { TFields } from '../../utils/fields';
+
+interface HeaderProps {
+  fields: TFields[];
+  setFields: (fields: TFields[]) => void;
+}
+
+export const Header = ({ fields, setFields }: HeaderProps) => {
+  const handleChangeDisplay = (displayName: string) => {
+    const newFields = fields.map((item) =>
+      item.name === displayName ? { ...item, display: !item.display } : item
+    );
+    setFields(newFields);
+  };
   return (
     <Container>
       <h1>Trading</h1>
@@ -20,10 +31,10 @@ export const Header = () => {
               return (
                 <Box key={idx}>
                   <Form.Check
+                    checked={field.display}
                     onChange={(checked) => {
                       //console.log(field.display, ' - ', checked.target.checked);
-                      setFields([...fields]);
-                      console.log(setFields([...fields]));
+                      handleChangeDisplay(field.name);
                     }}
                     aria-checked={field.display}
                   />
