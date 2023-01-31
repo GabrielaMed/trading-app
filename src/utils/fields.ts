@@ -13,6 +13,7 @@ export const fields = [
   { name: 'DY', display: true },
   { name: 'Growth', display: true },
   { name: 'Have Date', display: true },
+  { name: 'LPA', display: true },
   { name: 'D/ebitida', display: true },
   { name: 'Margem Liq.', display: true },
   { name: 'Payout', display: true },
