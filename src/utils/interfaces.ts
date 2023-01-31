@@ -19,4 +19,8 @@ export interface ITicker {
   pl3: number;
   pl4: number;
   roe: number;
+  qttyRent1: number;
+  qttyRent2: number;
+  qttyRent3: number;
+  rentAverage: number;
 }
