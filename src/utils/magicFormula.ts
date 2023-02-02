@@ -1,17 +1,11 @@
 import { ITicker } from './interfaces';
 
 export const sortRoe = (data: any) => {
-  return data.sort(
-    (firstItem: { roe: number }, secondItem: { roe: number }) =>
-      firstItem.roe - secondItem.roe
-  );
+  return data.sort((a: { roe: number }, b: { roe: number }) => a.roe - b.roe);
 };
 
 export const sortPL = (data: any) => {
-  return data.sort(
-    (firstItem: { pl: number }, secondItem: { pl: number }) =>
-      firstItem.pl - secondItem.pl
-  );
+  return data.sort((a: { pl: number }, b: { pl: number }) => a.pl - b.pl);
 };
 
 export const sortMargemLiq = (data: any) => {
@@ -21,8 +15,8 @@ export const sortMargemLiq = (data: any) => {
   });
 
   return newData.sort(
-    (firstItem: { mliquida: number }, secondItem: { mliquida: number }) =>
-      firstItem.mliquida - secondItem.mliquida
+    (a: { mliquida: number }, b: { mliquida: number }) =>
+      a.mliquida - b.mliquida
   );
 };
 
