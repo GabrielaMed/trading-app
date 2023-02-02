@@ -16,6 +16,7 @@ import {
   formulateRentSign,
 } from '../../utils/formulate';
 import { MdOutlineCancel, MdOutlineCheckCircleOutline } from 'react-icons/md';
+import { createMagicFormula } from '../../utils/magicFormula';
 
 export const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -24,13 +25,16 @@ export const Home = () => {
 
   const getData = async () => {
     setLoading(true);
-    const dataSnapshot = await getDocs(collection(db, 'tickers'));
+    const dataCol = collection(db, 'tickers');
+    const dataSnapshot = await getDocs(dataCol);
     const dataApi: ITicker[] = [];
 
     dataSnapshot.docs.forEach((item) => {
       const itemData = item.data();
       dataApi.push(itemData as ITicker);
     });
+
+    createMagicFormula(dataApi);
 
     setData([...dataApi]);
     // console.log(data);

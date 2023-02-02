@@ -1,4 +1,12 @@
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import {
+  getFirestore,
+  query,
+  orderBy,
+  OrderByDirection,
+  Query,
+  limit,
+  getDocs,
+} from 'firebase/firestore';
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
@@ -22,3 +30,17 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 export const db = getFirestore(app);
+
+// export const orderByColumn = async (data: any, column: string, order: any) => {
+//   const columnOrdered = await getDocs(query(data, orderBy(column, order)));
+//   let roeArrayOrdered;
+
+//   columnOrdered.forEach((doc, index = 1) => {
+//     const data = doc.data();
+//     roeArrayOrdered = [{ index, data }];
+//     index++;
+//     console.log(roeArrayOrdered);
+//   });
+
+//   //console.log(roeArrayOrdered);
+// };
