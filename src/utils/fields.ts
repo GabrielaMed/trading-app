@@ -29,4 +29,5 @@ export const fields = [
   { name: 'PL 4', display: true },
   { name: 'Sinal Aluguel', display: true },
   { name: 'ROE', display: true },
+  { name: 'Magic Formula', display: true },
 ];

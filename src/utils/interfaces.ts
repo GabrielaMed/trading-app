@@ -24,3 +24,8 @@ export interface ITicker {
   qttyRent3: number;
   rentAverage: number;
 }
+
+export interface IMagicFormula {
+  tickerName: string;
+  pointsMF: number;
+}

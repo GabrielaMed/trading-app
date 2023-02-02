@@ -3,7 +3,7 @@ import { Container } from './styles';
 import { Header } from '../../components/Header';
 import { useEffect, useState } from 'react';
 import { fields as fieldsDefault } from '../../utils/fields';
-import { ITicker } from '../../utils/interfaces';
+import { IMagicFormula, ITicker } from '../../utils/interfaces';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../api/firebase';
 import ReactLoading from 'react-loading';
@@ -22,6 +22,7 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState(fieldsDefault);
   const [data, setData] = useState<ITicker[]>([]);
+  const [magicFormulaData, setMagicFormulaData] = useState<IMagicFormula[]>([]);
 
   const getData = async () => {
     setLoading(true);
@@ -34,8 +35,8 @@ export const Home = () => {
       dataApi.push(itemData as ITicker);
     });
 
-    createMagicFormula(dataApi);
-
+    //createMagicFormula(dataApi);
+    setMagicFormulaData(createMagicFormula(dataApi));
     setData([...dataApi]);
     // console.log(data);
     setLoading(false);
@@ -78,11 +79,31 @@ export const Home = () => {
 
                 {fields.find((field) => field.name === 'B. Graham')
                   ?.display && (
-                  <td>{formulateBGraham(ticker.lpa, ticker.vpa)}</td>
+                  <td
+                    style={{
+                      backgroundColor:
+                        formulateBGraham(ticker.lpa, ticker.vpa) <
+                        ticker.cotacao
+                          ? colors.lightYellow
+                          : colors.lightGreen,
+                    }}
+                  >
+                    {formulateBGraham(ticker.lpa, ticker.vpa)}
+                  </td>
                 )}
 
                 {fields.find((field) => field.name === 'Bazin')?.display && (
-                  <td>{formulateBazin(ticker.cotacao, ticker.dy)}</td>
+                  <td
+                    style={{
+                      backgroundColor:
+                        formulateBazin(ticker.cotacao, ticker.dy) <
+                        ticker.cotacao
+                          ? colors.lightYellow
+                          : colors.lightGreen,
+                    }}
+                  >
+                    {formulateBazin(ticker.cotacao, ticker.dy)}
+                  </td>
                 )}
 
                 {fields.find((field) => field.name === 'MSeg. Graham')
@@ -116,17 +137,51 @@ export const Home = () => {
                 )}
 
                 {fields.find((field) => field.name === 'D/ebitida')
-                  ?.display && <td>{ticker.debitOfEbitida}</td>}
+                  ?.display && (
+                  <td
+                    style={{
+                      backgroundColor:
+                        ticker.debitOfEbitida < 3.5
+                          ? colors.lightYellow
+                          : colors.lightGreen,
+                    }}
+                  >
+                    {ticker.debitOfEbitida}
+                  </td>
+                )}
 
                 {fields.find((field) => field.name === 'Margem Liq.')
-                  ?.display && <td>{ticker.mliquida}</td>}
+                  ?.display && (
+                  <td
+                    style={{
+                      backgroundColor:
+                        ticker.mliquida < 12
+                          ? colors.lightYellow
+                          : colors.lightGreen,
+                    }}
+                  >
+                    {ticker.mliquida}
+                  </td>
+                )}
 
                 {fields.find((field) => field.name === 'Payout')?.display && (
                   <td>{ticker.payout}</td>
                 )}
 
                 {fields.find((field) => field.name === 'PL Médio')?.display && (
-                  <td>
+                  <td
+                    style={{
+                      backgroundColor:
+                        formulatePlMedio(
+                          +ticker.pl1,
+                          +ticker.pl2,
+                          +ticker.pl3,
+                          +ticker.pl4
+                        ) < ticker.pl
+                          ? colors.lightYellow
+                          : colors.lightGreen,
+                    }}
+                  >
                     {formulatePlMedio(
                       +ticker.pl1,
                       +ticker.pl2,
@@ -171,6 +226,9 @@ export const Home = () => {
                   <td>{!ticker.pl4 ? '0.00' : ticker.pl4}</td>
                 )}
 
+                {fields.find((field) => field.name === 'ROE')?.display && (
+                  <td>{ticker.roe}</td>
+                )}
                 {fields.find((field) => field.name === 'Sinal Aluguel')
                   ?.display && (
                   <td align='center'>
@@ -189,8 +247,21 @@ export const Home = () => {
                     )}
                   </td>
                 )}
-                {fields.find((field) => field.name === 'ROE')?.display && (
-                  <td>{ticker.roe}</td>
+
+                {fields.find((field) => field.name === 'Magic Formula')
+                  ?.display && (
+                  <td align='center'>
+                    {magicFormulaData.findIndex(
+                      (item) => item.tickerName === ticker.name
+                    ) < 30 ? (
+                      <MdOutlineCheckCircleOutline
+                        color={colors.green}
+                        size={24}
+                      />
+                    ) : (
+                      <MdOutlineCancel color={colors.red} size={24} />
+                    )}
+                  </td>
                 )}
               </tr>
             ))}
