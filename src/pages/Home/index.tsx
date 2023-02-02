@@ -11,7 +11,6 @@ import { colors } from '../../utils/colors';
 import {
   formulateBGraham,
   formulateBazin,
-  formulateMSegGraham,
   formulatePlMedio,
   formulateRentSign,
 } from '../../utils/formulate';
@@ -42,6 +41,14 @@ export const Home = () => {
     setLoading(false);
   };
 
+  const handleOrderTicker = () => {
+    const dataSorted = data.sort((a, b) =>
+      a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+    );
+
+    console.log(dataSorted);
+    setData([...dataSorted]);
+  };
   //console.log(data, '1');
 
   useEffect(() => {
@@ -63,9 +70,15 @@ export const Home = () => {
         </div>
       )}
       {!loading && (
-        <Table striped hover>
+        <Table striped hover responsive className='homeTable'>
           <thead>
             <tr>
+              <th
+                onClick={() => handleOrderTicker()}
+                style={{ cursor: 'pointer' }}
+              >
+                Ticker
+              </th>
               {fields.map(
                 (field, idx) => field.display && <th key={idx}>{field.name}</th>
               )}
@@ -82,7 +95,7 @@ export const Home = () => {
                   <td
                     style={{
                       backgroundColor:
-                        formulateBGraham(ticker.lpa, ticker.vpa) <
+                        +formulateBGraham(ticker.lpa, ticker.vpa) <
                         ticker.cotacao
                           ? colors.lightYellow
                           : colors.lightGreen,
@@ -96,7 +109,7 @@ export const Home = () => {
                   <td
                     style={{
                       backgroundColor:
-                        formulateBazin(ticker.cotacao, ticker.dy) <
+                        +formulateBazin(ticker.cotacao, ticker.dy) <
                         ticker.cotacao
                           ? colors.lightYellow
                           : colors.lightGreen,
@@ -105,7 +118,7 @@ export const Home = () => {
                     {formulateBazin(ticker.cotacao, ticker.dy)}
                   </td>
                 )}
-
+                {/* 
                 {fields.find((field) => field.name === 'MSeg. Graham')
                   ?.display && (
                   <td>
@@ -115,7 +128,7 @@ export const Home = () => {
                       ticker.cotacao
                     )}
                   </td>
-                )}
+                )} */}
 
                 {fields.find((field) => field.name === 'CAGR')?.display && (
                   <td>{ticker.cagr}</td>
@@ -172,7 +185,7 @@ export const Home = () => {
                   <td
                     style={{
                       backgroundColor:
-                        formulatePlMedio(
+                        +formulatePlMedio(
                           +ticker.pl1,
                           +ticker.pl2,
                           +ticker.pl3,
