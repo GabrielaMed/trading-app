@@ -1,3 +1,6 @@
+# About
+This app show some tickers and its info from B3 the brazilian stock exchange.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
