@@ -13,6 +13,7 @@ export const Container = styled.div`
 
 export const TableContainer = styled.div`
   width: 100%;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
