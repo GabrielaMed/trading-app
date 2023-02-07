@@ -149,7 +149,6 @@ body {
 }
 
 .homeTable{
-  margin-inline: 1rem;
   font-size: 12px;
 }
 
@@ -159,4 +158,22 @@ body {
 
 .homeTable>:not(caption)>*>* {
   padding: 0.2rem !important;
+}
+
+.homeTable thead th{
+  position: sticky;
+  top: 0;
+}
+
+.homeTable > tbody{
+  height: 29rem !important;
+  overflow-y: scroll !important;
+  display: block !important;
+}
+
+.homeTable > thead > tr,
+.homeTable > tbody > tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
