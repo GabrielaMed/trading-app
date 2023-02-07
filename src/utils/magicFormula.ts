@@ -1,11 +1,17 @@
 import { IMagicFormula, ITicker } from './interfaces';
 
 export const sortRoe = (data: any) => {
-  return data.sort((a: { roe: number }, b: { roe: number }) => a.roe - b.roe);
+  const result = data
+    .filter((ticker: { roe: number }) => ticker.roe !== undefined)
+    .sort((a: { roe: number }, b: { roe: number }) => a.roe - b.roe);
+  return result;
 };
 
 export const sortPL = (data: any) => {
-  return data.sort((a: { pl: number }, b: { pl: number }) => a.pl - b.pl);
+  const result = data
+    .filter((ticker: { pl: undefined }) => ticker.pl !== undefined)
+    .sort((a: { pl: number }, b: { pl: number }) => a.pl - b.pl);
+  return result;
 };
 
 export const sortMargemLiq = (data: any) => {
