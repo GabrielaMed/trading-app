@@ -16,6 +16,14 @@ export const Container = styled.header`
     display: flex;
     justify-content: flex-end;
   }
+
+  div {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+  }
 `;
 
 export const Box = styled.div`

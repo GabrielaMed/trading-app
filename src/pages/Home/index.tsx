@@ -1,4 +1,4 @@
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import { Container, TableContainer } from './styles';
 import { Header } from '../../components/Header';
 import { useEffect, useState } from 'react';
@@ -14,7 +14,11 @@ import {
   formulatePlMedio,
   formulateRentSign,
 } from '../../utils/formulate';
-import { MdOutlineCancel, MdOutlineCheckCircleOutline } from 'react-icons/md';
+import {
+  MdOutlineCancel,
+  MdOutlineCheckCircleOutline,
+  MdRefresh,
+} from 'react-icons/md';
 import { createMagicFormula } from '../../utils/magicFormula';
 
 export const Home = () => {
@@ -37,6 +41,7 @@ export const Home = () => {
     //createMagicFormula(dataApi);
     setMagicFormulaData(createMagicFormula(dataApi));
     setData([...dataApi]);
+    localStorage.setItem('data', JSON.stringify(dataApi));
     // console.log(data);
     setLoading(false);
   };
@@ -52,7 +57,13 @@ export const Home = () => {
   //console.log(data, '1');
 
   useEffect(() => {
-    getData();
+    const getItemVal = localStorage.getItem('data');
+    //console.log('getItemVal', getItemVal);
+    if (!getItemVal) {
+      getData();
+    } else {
+      setData(JSON.parse(getItemVal));
+    }
     //console.log(data, '11');
   }, []);
 
