@@ -39,7 +39,6 @@ export const Home = () => {
     });
 
     //createMagicFormula(dataApi);
-    setMagicFormulaData(createMagicFormula(dataApi));
     setData([...dataApi]);
     localStorage.setItem('data', JSON.stringify(dataApi));
     // console.log(data);
@@ -55,6 +54,10 @@ export const Home = () => {
     setData([...dataSorted]);
   };
   //console.log(data, '1');
+
+  useEffect(() => {
+    setMagicFormulaData(createMagicFormula(data));
+  }, [data]);
 
   useEffect(() => {
     const getItemVal = localStorage.getItem('data');
