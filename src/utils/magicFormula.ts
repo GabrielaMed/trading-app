@@ -2,7 +2,9 @@ import { IMagicFormula, ITicker } from './interfaces';
 
 export const sortRoe = (data: any) => {
   const result = data
-    .filter((ticker: { roe: number }) => ticker.roe !== undefined)
+    .map((ticker: { roe: number }) =>
+      ticker.roe === undefined ? { ...ticker, roe: 0.0 } : ticker
+    )
     .sort((a: { roe: number }, b: { roe: number }) => a.roe - b.roe);
 
   return result;
@@ -10,24 +12,25 @@ export const sortRoe = (data: any) => {
 
 export const sortPL = (data: any) => {
   const result = data
-    .filter(
-      (ticker: { pl: number }) => ticker.pl !== undefined && ticker.pl > 0
+    .map((ticker: { pl: number }) =>
+      ticker.pl === undefined || ticker.pl < 0 ? { ...ticker, pl: 999 } : ticker
     )
-    .sort((a: { pl: number }, b: { pl: number }) => a.pl - b.pl);
+    .sort((a: { pl: number }, b: { pl: number }) => b.pl - a.pl);
 
   return result;
 };
 
 export const sortMargemLiq = (data: any) => {
-  const newData = data.map((ticker: { mliquida: string }) => {
-    if (+ticker.mliquida > 99) ticker.mliquida = '10.00';
-    return ticker;
-  });
-
-  return newData.sort(
-    (a: { mliquida: number }, b: { mliquida: number }) =>
-      a.mliquida - b.mliquida
-  );
+  return data
+    .map((ticker: { mliquida: number }) =>
+      ticker.mliquida > 99 || !ticker?.mliquida
+        ? { ...ticker, mliquida: 10 }
+        : ticker
+    )
+    .sort(
+      (a: { mliquida: number }, b: { mliquida: number }) =>
+        a.mliquida - b.mliquida
+    );
 };
 
 export const createMagicFormula = (data: any) => {
@@ -38,7 +41,7 @@ export const createMagicFormula = (data: any) => {
 
   console.log('pl', plArray);
   console.log('mliq', mLiquidaArray);
-  //console.log();
+  console.log('roe', roeArray);
 
   data.forEach((ticker: { name: string }) => {
     const roeIndex = roeArray.findIndex(

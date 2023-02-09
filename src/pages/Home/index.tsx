@@ -60,6 +60,10 @@ export const Home = () => {
   }, [data]);
 
   useEffect(() => {
+    console.log('mf', magicFormulaData);
+  }, [magicFormulaData]);
+
+  useEffect(() => {
     const getItemVal = localStorage.getItem('data');
     //console.log('getItemVal', getItemVal);
     if (!getItemVal) {
