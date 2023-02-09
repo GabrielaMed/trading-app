@@ -4,13 +4,17 @@ export const sortRoe = (data: any) => {
   const result = data
     .filter((ticker: { roe: number }) => ticker.roe !== undefined)
     .sort((a: { roe: number }, b: { roe: number }) => a.roe - b.roe);
+
   return result;
 };
 
 export const sortPL = (data: any) => {
   const result = data
-    .filter((ticker: { pl: undefined }) => ticker.pl !== undefined)
+    .filter(
+      (ticker: { pl: number }) => ticker.pl !== undefined && ticker.pl > 0
+    )
     .sort((a: { pl: number }, b: { pl: number }) => a.pl - b.pl);
+
   return result;
 };
 
@@ -32,6 +36,8 @@ export const createMagicFormula = (data: any) => {
   const mLiquidaArray = sortMargemLiq(data);
   const magicFormula: IMagicFormula[] = [];
 
+  console.log('pl', plArray);
+  console.log('mliq', mLiquidaArray);
   //console.log();
 
   data.forEach((ticker: { name: string }) => {
