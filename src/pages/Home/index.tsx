@@ -162,9 +162,9 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            ticker.debitOfEbitida > 3.4
+                            ticker?.debitOfEbitida < 3.6
                               ? colors.lightGreen
-                              : colors.lightYellow,
+                              : "white",
                         }}
                       >
                         {ticker.debitOfEbitida}
@@ -188,8 +188,7 @@ export const Home = () => {
                     {fields.find((field) => field.name === "Payout")
                       ?.display && <td>{ticker.payout}</td>}
 
-                    {fields.find((field) => field.name === "PL Médio")
-                      ?.display && (
+                    {fields.find((field) => field.name === "PL")?.display && (
                       <td
                         style={{
                           backgroundColor:
@@ -203,6 +202,12 @@ export const Home = () => {
                               : colors.lightYellow,
                         }}
                       >
+                        {ticker.pl}
+                      </td>
+                    )}
+                    {fields.find((field) => field.name === "PL Médio")
+                      ?.display && (
+                      <td>
                         {formulatePlMedio(
                           +ticker.pl1,
                           +ticker.pl2,
@@ -210,10 +215,6 @@ export const Home = () => {
                           +ticker.pl4
                         )}
                       </td>
-                    )}
-
-                    {fields.find((field) => field.name === "PL")?.display && (
-                      <td>{ticker.pl}</td>
                     )}
 
                     {fields.find((field) => field.name === "PVP")?.display && (
