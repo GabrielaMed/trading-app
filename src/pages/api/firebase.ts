@@ -6,15 +6,10 @@ import {
   Query,
   limit,
   getDocs,
-} from 'firebase/firestore';
-// Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+} from "firebase/firestore";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
   apiKey: `${process.env.REACT_APP_API_KEY}`,
   authDomain: `${process.env.REACT_APP_AUTHDOMAIN}`,
@@ -25,22 +20,7 @@ const firebaseConfig = {
   measurementId: `${process.env.REACT_APP_MEASUREMENT_ID}`,
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
 export const db = getFirestore(app);
-
-// export const orderByColumn = async (data: any, column: string, order: any) => {
-//   const columnOrdered = await getDocs(query(data, orderBy(column, order)));
-//   let roeArrayOrdered;
-
-//   columnOrdered.forEach((doc, index = 1) => {
-//     const data = doc.data();
-//     roeArrayOrdered = [{ index, data }];
-//     index++;
-//     console.log(roeArrayOrdered);
-//   });
-
-//   //console.log(roeArrayOrdered);
-// };
