@@ -1,15 +1,7 @@
-import {
-  getFirestore,
-  query,
-  orderBy,
-  OrderByDirection,
-  Query,
-  limit,
-  getDocs,
-} from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
   apiKey: `${process.env.REACT_APP_API_KEY}`,
   authDomain: `${process.env.REACT_APP_AUTHDOMAIN}`,
@@ -21,6 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
 export const db = getFirestore(app);

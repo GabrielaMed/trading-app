@@ -1,5 +1,4 @@
-import styled from 'styled-components';
-import { colors } from '../../utils/colors';
+import styled from "styled-components";
 
 export const Container = styled.div`
   margin: 0px;

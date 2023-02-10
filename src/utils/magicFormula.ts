@@ -1,4 +1,4 @@
-import { IMagicFormula, ITicker } from './interfaces';
+import { IMagicFormula } from "./interfaces";
 
 export const sortRoe = (data: any) => {
   const result = data
@@ -39,9 +39,9 @@ export const createMagicFormula = (data: any) => {
   const mLiquidaArray = sortMargemLiq(data);
   const magicFormula: IMagicFormula[] = [];
 
-  console.log('pl', plArray);
-  console.log('mliq', mLiquidaArray);
-  console.log('roe', roeArray);
+  console.log("pl", plArray);
+  console.log("mliq", mLiquidaArray);
+  console.log("roe", roeArray);
 
   data.forEach((ticker: { name: string }) => {
     const roeIndex = roeArray.findIndex(
