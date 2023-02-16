@@ -39,10 +39,6 @@ export const createMagicFormula = (data: any) => {
   const mLiquidaArray = sortMargemLiq(data);
   const magicFormula: IMagicFormula[] = [];
 
-  console.log("pl", plArray);
-  console.log("mliq", mLiquidaArray);
-  console.log("roe", roeArray);
-
   data.forEach((ticker: { name: string }) => {
     const roeIndex = roeArray.findIndex(
       (item: { name: string }) => item.name === ticker.name

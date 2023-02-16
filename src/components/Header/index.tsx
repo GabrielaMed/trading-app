@@ -6,7 +6,7 @@ import { MdRefresh } from "react-icons/md";
 
 interface HeaderProps {
   fields: TFields[];
-  setFields: (fields: TFields[]) => void;
+  setFields: (fields: any) => void;
 }
 
 export const Header = ({ fields, setFields }: HeaderProps) => {

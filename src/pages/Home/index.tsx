@@ -2,7 +2,7 @@ import { Table } from "react-bootstrap";
 import { Container, TableContainer } from "./styles";
 import { Header } from "../../components/Header";
 import { useEffect, useState } from "react";
-import { fields as fieldsDefault } from "../../utils/fields";
+import { fieldNames, fields as fieldsDefault } from "../../utils/fields";
 import { IMagicFormula, ITicker } from "../../utils/interfaces";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../api/firebase";
@@ -11,7 +11,6 @@ import { colors } from "../../utils/colors";
 import {
   formulateBGraham,
   formulateBazin,
-  formulatePlMedio,
   formulateRentSign,
 } from "../../utils/formulate";
 import { MdOutlineCancel, MdOutlineCheckCircleOutline } from "react-icons/md";
@@ -19,9 +18,64 @@ import { createMagicFormula } from "../../utils/magicFormula";
 
 export const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [fields, setFields] = useState(fieldsDefault);
+  const [fields, setFields] = useState([...fieldsDefault]);
   const [data, setData] = useState<ITicker[]>([]);
   const [magicFormulaData, setMagicFormulaData] = useState<IMagicFormula[]>([]);
+
+  const calcAvgPL = (tickers: ITicker[]) => {
+    return tickers.map((ticker) => {
+      let fator = ticker?.pl1 ? 1 : 0;
+      fator = fator + ticker?.pl2 ? 1 : 0;
+      fator = fator + ticker?.pl3 ? 1 : 0;
+      fator = fator + ticker?.pl4 ? 1 : 0;
+
+      return {
+        ...ticker,
+        plmedio:
+          (ticker?.pl1 ||
+            0 + ticker?.pl2 ||
+            0 + ticker?.pl3 ||
+            0 + ticker?.pl4 ||
+            0) / fator,
+      };
+    });
+  };
+
+  useEffect(() => {
+    const dataFromStorage = localStorage.getItem("data");
+    if (dataFromStorage) {
+      const filters = fields.filter((field) => field.filtered);
+
+      let newData = [...JSON.parse(dataFromStorage)];
+      filters.forEach((field) => {
+        switch (field.name) {
+          case fieldNames.margemliquida:
+            newData = newData.filter((ticker) => ticker.mliquida > 10);
+            break;
+          case fieldNames.pl || fieldNames.plmedio:
+            newData = newData.filter(
+              (ticker) => ticker.pl > 0 && ticker.pl <= ticker?.plmedio
+            );
+            break;
+          case fieldNames.insider:
+            newData = newData.filter((ticker) => ticker.valorInsider >= 0);
+            break;
+          default:
+            break;
+        }
+      });
+      setData([...newData]);
+
+      console.log("-->", newData);
+    }
+  }, [fields]);
+
+  const toggleFilter = (fieldName: string) => {
+    const newFields = fields.map((field) =>
+      field.name === fieldName ? { ...field, filtered: !field.filtered } : field
+    );
+    setFields([...newFields]);
+  };
 
   const getData = async () => {
     setLoading(true);
@@ -35,9 +89,9 @@ export const Home = () => {
     });
 
     //createMagicFormula(dataApi);
-    setData([...dataApi]);
-    localStorage.setItem("data", JSON.stringify(dataApi));
-    // console.log(data);
+    const newDataParsed = calcAvgPL(dataApi);
+    setData([...newDataParsed]);
+    localStorage.setItem("data", JSON.stringify(newDataParsed));
     setLoading(false);
   };
 
@@ -46,28 +100,23 @@ export const Home = () => {
       a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
     );
 
-    console.log(dataSorted);
     setData([...dataSorted]);
   };
-  //console.log(data, '1');
 
   useEffect(() => {
-    setMagicFormulaData(createMagicFormula(data));
+    if (magicFormulaData.length === 0)
+      setMagicFormulaData(createMagicFormula(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
-    console.log("mf", magicFormulaData);
-  }, [magicFormulaData]);
-
-  useEffect(() => {
     const getItemVal = localStorage.getItem("data");
-    //console.log('getItemVal', getItemVal);
-    if (!getItemVal) {
-      getData();
-    } else {
+    if (getItemVal) {
       setData(JSON.parse(getItemVal));
+    } else {
+      getData();
     }
-    //console.log(data, '11');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -97,7 +146,15 @@ export const Home = () => {
                 </th>
                 {fields.map(
                   (field, idx) =>
-                    field.display && <th key={idx}>{field.name}</th>
+                    field.display && (
+                      <th
+                        style={{ cursor: "pointer" }}
+                        onClick={() => toggleFilter(field.name)}
+                        key={idx}
+                      >
+                        {field.name}
+                      </th>
+                    )
                 )}
               </tr>
             </thead>
@@ -171,8 +228,9 @@ export const Home = () => {
                       </td>
                     )}
 
-                    {fields.find((field) => field.name === "Margem Liq.")
-                      ?.display && (
+                    {fields.find(
+                      (field) => field.name === fieldNames.margemliquida
+                    )?.display && (
                       <td
                         style={{
                           backgroundColor:
@@ -191,37 +249,24 @@ export const Home = () => {
                     {fields.find((field) => field.name === "PL")?.display && (
                       <td
                         style={{
-                          backgroundColor:
-                            +formulatePlMedio(
-                              +ticker.pl1,
-                              +ticker.pl2,
-                              +ticker.pl3,
-                              +ticker.pl4
-                            ) > ticker.pl
-                              ? colors.lightGreen
-                              : colors.lightYellow,
+                          backgroundColor: !ticker?.plmedio
+                            ? ""
+                            : ticker?.plmedio > ticker.pl
+                            ? colors.lightGreen
+                            : "",
                         }}
                       >
                         {ticker.pl}
                       </td>
                     )}
                     {fields.find((field) => field.name === "PL Médio")
-                      ?.display && (
-                      <td>
-                        {formulatePlMedio(
-                          +ticker.pl1,
-                          +ticker.pl2,
-                          +ticker.pl3,
-                          +ticker.pl4
-                        )}
-                      </td>
-                    )}
+                      ?.display && <td>{ticker?.plmedio || 0}</td>}
 
                     {fields.find((field) => field.name === "PVP")?.display && (
                       <td>{ticker.pvp}</td>
                     )}
 
-                    {fields.find((field) => field.name === "Sector")
+                    {fields.find((field) => field.name === fieldNames.sector)
                       ?.display && <td>{ticker.sector}</td>}
 
                     {fields.find((field) => field.name === "Tag Along")
@@ -269,8 +314,9 @@ export const Home = () => {
                       </td>
                     )}
 
-                    {fields.find((field) => field.name === "Magic Formula")
-                      ?.display && (
+                    {fields.find(
+                      (field) => field.name === fieldNames.magicformula
+                    )?.display && (
                       <td align="center">
                         {magicFormulaData.findIndex(
                           (item) => item.tickerName === ticker.name

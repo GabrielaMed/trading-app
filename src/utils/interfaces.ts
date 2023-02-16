@@ -19,6 +19,7 @@ export interface ITicker {
   pl3: number;
   pl4: number;
   roe: number;
+  plmedio?: number;
   lastQuantityRent1: number;
   lastQuantityRent2: number;
   lastQuantityRent3: number;
