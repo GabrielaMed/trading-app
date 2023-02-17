@@ -73,11 +73,10 @@ export const Home = () => {
     //createMagicFormula(dataApi);
     let newDataParsed;
     newDataParsed = calcAvgPL(dataApi);
-    console.log('avg', newDataParsed);
+
     newDataParsed = formulateBGraham(dataApi);
-    console.log('bg', newDataParsed);
+
     newDataParsed = formulateBazin(dataApi);
-    console.log('bz', newDataParsed);
 
     setData([...newDataParsed]);
     localStorage.setItem('data', JSON.stringify(newDataParsed));
