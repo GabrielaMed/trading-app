@@ -1,6 +1,8 @@
 export interface ITicker {
   name: string;
   cotacao: number;
+  bGraham?: number;
+  bazin?: number;
   cagr: number;
   dy: number;
   growth: number;
