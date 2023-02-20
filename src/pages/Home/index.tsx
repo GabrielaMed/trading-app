@@ -21,7 +21,6 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([...fieldsDefault]);
   const [data, setData] = useState<ITicker[]>([]);
-  const [magicFormulaData, setMagicFormulaData] = useState<IMagicFormula[]>([]);
 
   useEffect(() => {
     const dataFromStorage = localStorage.getItem('data');
@@ -60,6 +59,9 @@ export const Home = () => {
               (ticker) => ticker.insider === 0 || ticker.insider === null
             );
             break;
+          case fieldNames.magicformula:
+            newData = newData.sort((ticker) => ticker.magicFormula);
+            break;
           default:
             break;
         }
@@ -93,6 +95,10 @@ export const Home = () => {
     newDataParsed = calcAvgPL(dataApi);
     newDataParsed = formulateBGraham(newDataParsed);
     newDataParsed = formulateBazin(newDataParsed);
+    newDataParsed = createMagicFormula(newDataParsed).map((ticker, idx) => ({
+      ...ticker,
+      magicFormula: idx,
+    }));
 
     setData([...newDataParsed]);
     localStorage.setItem('data', JSON.stringify(newDataParsed));
@@ -106,12 +112,6 @@ export const Home = () => {
 
     setData([...dataSorted]);
   };
-
-  useEffect(() => {
-    if (magicFormulaData.length === 0)
-      setMagicFormulaData(createMagicFormula(data));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   useEffect(() => {
     const getItemVal = localStorage.getItem('data');
@@ -328,11 +328,14 @@ export const Home = () => {
                     {fields.find(
                       (field) => field.name === fieldNames.magicformula
                     )?.display && (
-                      <td align='center'>
-                        {magicFormulaData.findIndex(
-                          (item) => item.tickerName === ticker.name
-                        )}
-                        °
+                      <td
+                        align='center'
+                        style={{
+                          backgroundColor:
+                            ticker?.magicFormula! < 50 ? colors.lightGreen : '',
+                        }}
+                      >
+                        {ticker.magicFormula}°
                       </td>
                     )}
                     {fields.find((field) => field.name === 'Insider')

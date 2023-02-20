@@ -46,14 +46,14 @@ const sortLiquidez = (data: any) => {
   return result;
 };
 
-export const createMagicFormula = (data: ITicker[]) => {
-  const roeArray = sortRoe(data);
-  const plArray = sortPL(data);
-  const mLiquidaArray = sortMargemLiq(data);
-  const liquidezArray = sortLiquidez(data);
-  const magicFormula: IMagicFormula[] = [];
+export const createMagicFormula = (tickers: ITicker[]) => {
+  let magicFormula: ITicker[] = [];
+  tickers.map((ticker) => {
+    const roeArray = sortRoe(tickers);
+    const plArray = sortPL(tickers);
+    const mLiquidaArray = sortMargemLiq(tickers);
+    const liquidezArray = sortLiquidez(tickers);
 
-  data.forEach((ticker) => {
     const roeIndex = roeArray.findIndex(
       (item: { name: string }) => item.name === ticker.name
     );
@@ -72,9 +72,13 @@ export const createMagicFormula = (data: ITicker[]) => {
 
     const pointsMF = roeIndex + plIndex + mLiquidaIndex + liquidezIndex;
     const tickerName = ticker.name;
-    magicFormula.push({ tickerName, pointsMF });
+    magicFormula.push({ ...ticker, pointsMF });
+
+    // console.log(
+    //   'mf',
+    //   magicFormula.sort((a, b) => b.pointsMF - a.pointsMF)
+    // );
   });
-  //console.log(magicFormula.sort((a, b) => b.pointsMF - a.pointsMF));
 
   const magicFormulaSorted = magicFormula.sort(
     (a, b) => b.pointsMF - a.pointsMF

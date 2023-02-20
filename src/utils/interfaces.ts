@@ -28,9 +28,10 @@ export interface ITicker {
   rentAverage: number;
   valorInsider: number;
   liquidez: number;
+  magicFormula?: number;
+  pointsMF: number;
 }
 
 export interface IMagicFormula {
-  tickerName: string;
   pointsMF: number;
 }
