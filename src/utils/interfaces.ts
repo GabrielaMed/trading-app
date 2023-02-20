@@ -1,12 +1,14 @@
 export interface ITicker {
   name: string;
   cotacao: number;
+  bGraham?: number;
+  bazin?: number;
   cagr: number;
   dy: number;
   growth: number;
   haveDate: string;
   lpa: number;
-  debitOfEbitida: number;
+  dlebitida: number;
   mliquida: number;
   payout: number;
   pl: number;
@@ -25,6 +27,7 @@ export interface ITicker {
   lastQuantityRent3: number;
   rentAverage: number;
   valorInsider: number;
+  liquidez: number;
 }
 
 export interface IMagicFormula {
