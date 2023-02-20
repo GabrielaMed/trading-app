@@ -42,6 +42,24 @@ export const Home = () => {
           case fieldNames.insider:
             newData = newData.filter((ticker) => ticker.valorInsider >= 0);
             break;
+          case fieldNames.bgraham:
+            newData = newData.filter(
+              (ticker) => ticker.bGraham > 0 && ticker.bGraham >= ticker.cotacao
+            );
+            break;
+          case fieldNames.bazin:
+            newData = newData.filter(
+              (ticker) => ticker.bazin > 0 && ticker.bazin >= ticker.cotacao
+            );
+            break;
+          case fieldNames.liquidez:
+            newData = newData.filter((ticker) => ticker.liquidez >= 0.9);
+            break;
+          case fieldNames.insider:
+            newData = newData.filter(
+              (ticker) => ticker.insider === 0 || ticker.insider === null
+            );
+            break;
           default:
             break;
         }
@@ -73,10 +91,8 @@ export const Home = () => {
     //createMagicFormula(dataApi);
     let newDataParsed;
     newDataParsed = calcAvgPL(dataApi);
-
-    newDataParsed = formulateBGraham(dataApi);
-
-    newDataParsed = formulateBazin(dataApi);
+    newDataParsed = formulateBGraham(newDataParsed);
+    newDataParsed = formulateBazin(newDataParsed);
 
     setData([...newDataParsed]);
     localStorage.setItem('data', JSON.stringify(newDataParsed));
@@ -151,7 +167,16 @@ export const Home = () => {
                 .filter((ticker) => ticker.cotacao !== undefined)
                 .map((ticker, idx) => (
                   <tr key={idx}>
-                    <td>{ticker.name}</td>
+                    <td>
+                      {' '}
+                      <a
+                        href={`https://statusinvest.com.br/acoes/${ticker.name}`}
+                        target='_blank'
+                        style={{ textDecoration: 'none' }}
+                      >
+                        {ticker.name}
+                      </a>
+                    </td>
                     <td>{ticker.cotacao}</td>
 
                     {fields.find((field) => field.name === 'B. Graham')
@@ -159,12 +184,12 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            ticker?.bGraham || 0 > ticker.cotacao
+                            ticker?.bGraham! > ticker.cotacao
                               ? colors.lightGreen
                               : colors.lightYellow,
                         }}
                       >
-                        {ticker?.bGraham || 0}
+                        {ticker?.bGraham}
                       </td>
                     )}
 
@@ -173,12 +198,12 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            ticker?.bazin || 0 > ticker.cotacao
+                            ticker?.bazin! > ticker.cotacao
                               ? colors.lightGreen
                               : colors.lightYellow,
                         }}
                       >
-                        {ticker?.bazin || 0}
+                        {ticker?.bazin}
                       </td>
                     )}
 
@@ -205,12 +230,12 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            ticker?.debitOfEbitida < 3.6
+                            ticker?.dlebitida < 3.6
                               ? colors.lightGreen
                               : 'white',
                         }}
                       >
-                        {ticker.debitOfEbitida}
+                        {ticker.dlebitida}
                       </td>
                     )}
 
@@ -306,14 +331,8 @@ export const Home = () => {
                       <td align='center'>
                         {magicFormulaData.findIndex(
                           (item) => item.tickerName === ticker.name
-                        ) < 30 ? (
-                          <MdOutlineCheckCircleOutline
-                            color={colors.green}
-                            size={24}
-                          />
-                        ) : (
-                          <MdOutlineCancel color={colors.red} size={24} />
                         )}
+                        °
                       </td>
                     )}
                     {fields.find((field) => field.name === 'Insider')
@@ -321,6 +340,10 @@ export const Home = () => {
                       <td style={{ textAlign: 'end' }}>
                         {!ticker.pl4 ? '0.00' : ticker?.valorInsider}
                       </td>
+                    )}
+                    {fields.find((field) => field.name === 'Liquidez')
+                      ?.display && (
+                      <td style={{ textAlign: 'end' }}>{ticker.liquidez}</td>
                     )}
                   </tr>
                 ))}
