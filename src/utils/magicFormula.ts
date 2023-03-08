@@ -2,6 +2,7 @@ import { IMagicFormula, ITicker } from './interfaces';
 
 const sortRoe = (data: any) => {
   const result = data
+    .filter((ticker: { name: string }) => !ticker.name.includes('34'))
     .map((ticker: { roe: number }) =>
       ticker.roe === undefined ? { ...ticker, roe: 0.0 } : ticker
     )
@@ -12,6 +13,7 @@ const sortRoe = (data: any) => {
 
 const sortPL = (data: any) => {
   const result = data
+    .filter((ticker: { name: string }) => !ticker.name.includes('34'))
     .map((ticker: { pl: number }) =>
       ticker.pl === undefined || ticker.pl < 0 ? { ...ticker, pl: 999 } : ticker
     )
@@ -22,6 +24,7 @@ const sortPL = (data: any) => {
 
 const sortMargemLiq = (data: any) => {
   return data
+    .filter((ticker: { name: string }) => !ticker.name.includes('34'))
     .map((ticker: { mliquida: number }) =>
       ticker.mliquida > 99 || !ticker?.mliquida
         ? { ...ticker, mliquida: 10 }
@@ -35,6 +38,7 @@ const sortMargemLiq = (data: any) => {
 
 const sortLiquidez = (data: any) => {
   const result = data
+    .filter((ticker: { name: string }) => !ticker.name.includes('34'))
     .map((ticker: { liquidez: number }) =>
       ticker.liquidez === undefined ? { ...ticker, liquidez: 0.0 } : ticker
     )
