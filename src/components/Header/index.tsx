@@ -1,8 +1,8 @@
-import { Button, Form, Navbar, Offcanvas } from "react-bootstrap";
-import { Box, Container } from "./styles";
-import { Text } from "@ignite-ui/react";
-import { TFields } from "../../utils/fields";
-import { MdRefresh } from "react-icons/md";
+import { Button, Form, Navbar, Offcanvas } from 'react-bootstrap';
+import { Box, Container } from './styles';
+import { Text } from '@ignite-ui/react';
+import { TFields } from '../../utils/fields';
+import { MdRefresh } from 'react-icons/md';
 
 interface HeaderProps {
   fields: TFields[];
@@ -20,9 +20,9 @@ export const Header = ({ fields, setFields }: HeaderProps) => {
     <Container>
       <h1>Trading</h1>
       <div>
-        <Navbar bg="light" expand={false} className="hamburguer-menu">
+        <Navbar bg='light' expand={false} className='hamburguer-menu'>
           <Navbar.Toggle />
-          <Navbar.Offcanvas placement="end">
+          <Navbar.Offcanvas placement='end'>
             <Offcanvas.Header closeButton>
               <Offcanvas.Title>Filtros</Offcanvas.Title>
             </Offcanvas.Header>
@@ -38,14 +38,19 @@ export const Header = ({ fields, setFields }: HeaderProps) => {
                       }}
                       aria-checked={field.display}
                     />
-                    <Text style={{ color: "black" }}>{field.name}</Text>
+                    <Text style={{ color: 'black' }}>{field.name}</Text>
                   </Box>
                 );
               })}
             </Offcanvas.Body>
           </Navbar.Offcanvas>
         </Navbar>
-        <Button onClick={() => localStorage.clear()}>
+        <Button
+          onClick={() => {
+            localStorage.clear();
+            window.location.reload();
+          }}
+        >
           <MdRefresh />
         </Button>
       </div>

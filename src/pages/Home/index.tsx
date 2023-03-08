@@ -9,6 +9,7 @@ import { db } from "../api/firebase";
 import ReactLoading from "react-loading";
 import { colors } from "../../utils/colors";
 import {
+  calcAvgPL,
   formulateBGraham,
   formulateBazin,
   formulateRentSign,
@@ -20,26 +21,6 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([...fieldsDefault]);
   const [data, setData] = useState<ITicker[]>([]);
-  const [magicFormulaData, setMagicFormulaData] = useState<IMagicFormula[]>([]);
-
-  const calcAvgPL = (tickers: ITicker[]) => {
-    return tickers.map((ticker) => {
-      let fator = ticker?.pl1 ? 1 : 0;
-      fator = fator + ticker?.pl2 ? 1 : 0;
-      fator = fator + ticker?.pl3 ? 1 : 0;
-      fator = fator + ticker?.pl4 ? 1 : 0;
-
-      return {
-        ...ticker,
-        plmedio:
-          (ticker?.pl1 ||
-            0 + ticker?.pl2 ||
-            0 + ticker?.pl3 ||
-            0 + ticker?.pl4 ||
-            0) / fator,
-      };
-    });
-  };
 
   useEffect(() => {
     const dataFromStorage = localStorage.getItem("data");
@@ -61,7 +42,25 @@ export const Home = () => {
             newData = newData.filter((ticker) => ticker.valorInsider >= 0);
             break;
           case fieldNames.bgraham:
-            newData = newData.filter((ticker) => ticker.b >= 0);
+            newData = newData.filter(
+              (ticker) => ticker.bGraham > 0 && ticker.bGraham >= ticker.cotacao
+            );
+            break;
+          case fieldNames.bazin:
+            newData = newData.filter(
+              (ticker) => ticker.bazin > 0 && ticker.bazin >= ticker.cotacao
+            );
+            break;
+          case fieldNames.liquidez:
+            newData = newData.filter((ticker) => ticker.liquidez >= 0.9);
+            break;
+          case fieldNames.insider:
+            newData = newData.filter(
+              (ticker) => ticker.insider === 0 || ticker.insider === null
+            );
+            break;
+          case fieldNames.magicformula:
+            newData = newData.sort((ticker) => ticker.magicFormula);
             break;
           default:
             break;
@@ -92,7 +91,15 @@ export const Home = () => {
     });
 
     //createMagicFormula(dataApi);
-    const newDataParsed = calcAvgPL(dataApi);
+    let newDataParsed;
+    newDataParsed = calcAvgPL(dataApi);
+    newDataParsed = formulateBGraham(newDataParsed);
+    newDataParsed = formulateBazin(newDataParsed);
+    newDataParsed = createMagicFormula(newDataParsed).map((ticker, idx) => ({
+      ...ticker,
+      magicFormula: idx,
+    }));
+
     setData([...newDataParsed]);
     localStorage.setItem("data", JSON.stringify(newDataParsed));
     setLoading(false);
@@ -105,12 +112,6 @@ export const Home = () => {
 
     setData([...dataSorted]);
   };
-
-  useEffect(() => {
-    if (magicFormulaData.length === 0)
-      setMagicFormulaData(createMagicFormula(data));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   useEffect(() => {
     const getItemVal = localStorage.getItem("data");
@@ -166,7 +167,16 @@ export const Home = () => {
                 .filter((ticker) => ticker.cotacao !== undefined)
                 .map((ticker, idx) => (
                   <tr key={idx}>
-                    <td>{ticker.name}</td>
+                    <td>
+                      {" "}
+                      <a
+                        href={`https://statusinvest.com.br/acoes/${ticker.name}`}
+                        target="_blank"
+                        style={{ textDecoration: "none" }}
+                      >
+                        {ticker.name}
+                      </a>
+                    </td>
                     <td>{ticker.cotacao}</td>
 
                     {fields.find((field) => field.name === "B. Graham")
@@ -174,13 +184,12 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            +formulateBGraham(ticker.lpa, ticker.vpa) >
-                            ticker.cotacao
+                            ticker?.bGraham! > ticker.cotacao
                               ? colors.lightGreen
                               : colors.lightYellow,
                         }}
                       >
-                        {formulateBGraham(ticker.lpa, ticker.vpa)}
+                        {ticker?.bGraham}
                       </td>
                     )}
 
@@ -189,13 +198,12 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            +formulateBazin(ticker.cotacao, ticker.dy) >
-                            ticker.cotacao
+                            ticker?.bazin! > ticker.cotacao
                               ? colors.lightGreen
                               : colors.lightYellow,
                         }}
                       >
-                        {formulateBazin(ticker.cotacao, ticker.dy)}
+                        {ticker?.bazin}
                       </td>
                     )}
 
@@ -222,12 +230,12 @@ export const Home = () => {
                       <td
                         style={{
                           backgroundColor:
-                            ticker?.debitOfEbitida < 3.6
+                            ticker?.dlebitida < 3.6
                               ? colors.lightGreen
                               : "white",
                         }}
                       >
-                        {ticker.debitOfEbitida}
+                        {ticker.dlebitida}
                       </td>
                     )}
 
@@ -320,17 +328,14 @@ export const Home = () => {
                     {fields.find(
                       (field) => field.name === fieldNames.magicformula
                     )?.display && (
-                      <td align="center">
-                        {magicFormulaData.findIndex(
-                          (item) => item.tickerName === ticker.name
-                        ) < 30 ? (
-                          <MdOutlineCheckCircleOutline
-                            color={colors.green}
-                            size={24}
-                          />
-                        ) : (
-                          <MdOutlineCancel color={colors.red} size={24} />
-                        )}
+                      <td
+                        align="center"
+                        style={{
+                          backgroundColor:
+                            ticker?.magicFormula! < 50 ? colors.lightGreen : "",
+                        }}
+                      >
+                        {ticker.magicFormula}°
                       </td>
                     )}
                     {fields.find((field) => field.name === "Insider")
@@ -338,6 +343,10 @@ export const Home = () => {
                       <td style={{ textAlign: "end" }}>
                         {!ticker.pl4 ? "0.00" : ticker?.valorInsider}
                       </td>
+                    )}
+                    {fields.find((field) => field.name === "Liquidez")
+                      ?.display && (
+                      <td style={{ textAlign: "end" }}>{ticker.liquidez}</td>
                     )}
                   </tr>
                 ))}
