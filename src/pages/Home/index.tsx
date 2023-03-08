@@ -60,6 +60,9 @@ export const Home = () => {
           case fieldNames.insider:
             newData = newData.filter((ticker) => ticker.valorInsider >= 0);
             break;
+          case fieldNames.bgraham:
+            newData = newData.filter((ticker) => ticker.b >= 0);
+            break;
           default:
             break;
         }
@@ -304,12 +307,12 @@ export const Home = () => {
                           ticker.lastQuantityRent3,
                           ticker.rentAverage
                         ) ? (
+                          <MdOutlineCancel color={colors.red} size={24} />
+                        ) : (
                           <MdOutlineCheckCircleOutline
                             color={colors.green}
                             size={24}
                           />
-                        ) : (
-                          <MdOutlineCancel color={colors.red} size={24} />
                         )}
                       </td>
                     )}
