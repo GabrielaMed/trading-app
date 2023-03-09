@@ -21,6 +21,16 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([...fieldsDefault]);
   const [data, setData] = useState<ITicker[]>([]);
+  const [displayB3, setDisplayB3] = useState(false);
+  const [displayBDR, setDisplayBDR] = useState(false);
+
+  useEffect(() => {
+    setDisplayB3(displayB3);
+  }, [displayB3]);
+
+  useEffect(() => {
+    setDisplayBDR(displayBDR);
+  }, [displayBDR]);
 
   useEffect(() => {
     const dataFromStorage = localStorage.getItem("data");
@@ -106,11 +116,36 @@ export const Home = () => {
   };
 
   const handleOrderTicker = () => {
-    const dataSorted = data.sort((a, b) =>
-      a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
-    );
+    console.log("b3", displayB3, "- bdr", displayBDR);
+    let dataSorted;
+
+    if (displayB3 === true && displayBDR === false) {
+      dataSorted = data
+        .filter((ticker) => !ticker.name.includes("34"))
+        .sort((a, b) =>
+          a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+        );
+    } else if (displayB3 === false && displayBDR === true) {
+      dataSorted = data
+        .filter((ticker) => ticker.name.includes("34"))
+        .sort((a, b) =>
+          a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+        );
+    } else {
+      dataSorted = data.sort((a, b) =>
+        a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+      );
+    }
 
     setData([...dataSorted]);
+  };
+
+  const handleStatusInvest = (ticker: ITicker) => {
+    if (ticker.name.includes("34")) {
+      return `https://statusinvest.com.br/bdrs/${ticker.name}`;
+    } else {
+      return `https://statusinvest.com.br/acoes/${ticker.name}`;
+    }
   };
 
   useEffect(() => {
@@ -125,7 +160,14 @@ export const Home = () => {
 
   return (
     <Container>
-      <Header fields={fields} setFields={setFields} />
+      <Header
+        fields={fields}
+        setFields={setFields}
+        displayB3={displayB3}
+        setDisplayB3={setDisplayB3}
+        displayBDR={displayBDR}
+        setDisplayBDR={setDisplayBDR}
+      />
       {loading && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <ReactLoading
@@ -142,7 +184,9 @@ export const Home = () => {
             <thead>
               <tr>
                 <th
-                  onClick={() => handleOrderTicker()}
+                  onClick={(e) => {
+                    handleOrderTicker();
+                  }}
                   style={{ cursor: "pointer" }}
                   scope="col"
                 >
@@ -170,7 +214,7 @@ export const Home = () => {
                     <td>
                       {" "}
                       <a
-                        href={`https://statusinvest.com.br/acoes/${ticker.name}`}
+                        href={handleStatusInvest(ticker)}
                         target="_blank"
                         style={{ textDecoration: "none" }}
                       >
@@ -309,19 +353,24 @@ export const Home = () => {
                     {fields.find((field) => field.name === "Sinal Aluguel")
                       ?.display && (
                       <td align="center">
-                        {formulateRentSign(
-                          ticker.lastQuantityRent1,
-                          ticker.lastQuantityRent2,
-                          ticker.lastQuantityRent3,
-                          ticker.rentAverage
-                        ) ? (
-                          <MdOutlineCancel color={colors.red} size={24} />
-                        ) : (
-                          <MdOutlineCheckCircleOutline
-                            color={colors.green}
-                            size={24}
-                          />
-                        )}
+                        <a
+                          href={`https://www.iqb3.com.br/btc/${ticker.name}`}
+                          target="_blank"
+                        >
+                          {formulateRentSign(
+                            ticker.lastQuantityRent1,
+                            ticker.lastQuantityRent2,
+                            ticker.lastQuantityRent3,
+                            ticker.rentAverage
+                          ) ? (
+                            <MdOutlineCancel color={colors.red} size={24} />
+                          ) : (
+                            <MdOutlineCheckCircleOutline
+                              color={colors.green}
+                              size={24}
+                            />
+                          )}
+                        </a>
                       </td>
                     )}
 
