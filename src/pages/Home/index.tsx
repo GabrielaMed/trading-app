@@ -21,16 +21,6 @@ export const Home = () => {
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([...fieldsDefault]);
   const [data, setData] = useState<ITicker[]>([]);
-  const [displayB3, setDisplayB3] = useState(false);
-  const [displayBDR, setDisplayBDR] = useState(false);
-
-  useEffect(() => {
-    setDisplayB3(displayB3);
-  }, [displayB3]);
-
-  useEffect(() => {
-    setDisplayBDR(displayBDR);
-  }, [displayBDR]);
 
   useEffect(() => {
     const dataFromStorage = localStorage.getItem("data");
@@ -71,6 +61,12 @@ export const Home = () => {
             break;
           case fieldNames.magicformula:
             newData = newData.sort((ticker) => ticker.magicFormula);
+            break;
+          case fieldNames.onlyB3:
+            newData = newData.filter((ticker) => !ticker.name.includes("34"));
+            break;
+          case fieldNames.onlyBDR:
+            newData = newData.filter((ticker) => ticker.name.includes("34"));
             break;
           default:
             break;
@@ -116,26 +112,11 @@ export const Home = () => {
   };
 
   const handleOrderTicker = () => {
-    console.log("b3", displayB3, "- bdr", displayBDR);
     let dataSorted;
 
-    if (displayB3 === true && displayBDR === false) {
-      dataSorted = data
-        .filter((ticker) => !ticker.name.includes("34"))
-        .sort((a, b) =>
-          a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
-        );
-    } else if (displayB3 === false && displayBDR === true) {
-      dataSorted = data
-        .filter((ticker) => ticker.name.includes("34"))
-        .sort((a, b) =>
-          a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
-        );
-    } else {
-      dataSorted = data.sort((a, b) =>
-        a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
-      );
-    }
+    dataSorted = data.sort((a, b) =>
+      a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+    );
 
     setData([...dataSorted]);
   };
@@ -160,14 +141,7 @@ export const Home = () => {
 
   return (
     <Container>
-      <Header
-        fields={fields}
-        setFields={setFields}
-        displayB3={displayB3}
-        setDisplayB3={setDisplayB3}
-        displayBDR={displayBDR}
-        setDisplayBDR={setDisplayBDR}
-      />
+      <Header fields={fields} setFields={setFields} />
       {loading && (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <ReactLoading
@@ -192,18 +166,20 @@ export const Home = () => {
                 >
                   Ticker
                 </th>
-                {fields.map(
-                  (field, idx) =>
-                    field.display && (
-                      <th
-                        style={{ cursor: "pointer" }}
-                        onClick={() => toggleFilter(field.name)}
-                        key={idx}
-                      >
-                        {field.name}
-                      </th>
-                    )
-                )}
+                {fields
+                  .filter((field) => field.isColumn)
+                  .map(
+                    (field, idx) =>
+                      field.display && (
+                        <th
+                          style={{ cursor: "pointer" }}
+                          onClick={() => toggleFilter(field.name)}
+                          key={idx}
+                        >
+                          {field.name}
+                        </th>
+                      )
+                  )}
               </tr>
             </thead>
             <tbody>
